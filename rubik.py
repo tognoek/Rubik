@@ -1,49 +1,33 @@
-from matrix_inversion import MatrixInversion
 import pygame
+import numpy
+from matrix_inversion import Matrix3D
+from block import Block
+
 class Rubik:
     def __init__(self):
-        self.inversion = MatrixInversion()
-        self.len = 1
-        self.vertices = [[ self.len,  self.len,  self.len],  # Đỉnh 0
-                         [ self.len,  self.len, -self.len],  # Đỉnh 1
-                         [ self.len, -self.len,  self.len],  # Đỉnh 2
-                         [ self.len, -self.len, -self.len],  # Đỉnh 3
-                         [-self.len,  self.len,  self.len],  # Đỉnh 4
-                         [-self.len,  self.len, -self.len],  # Đỉnh 5
-                         [-self.len, -self.len,  self.len],  # Đỉnh 6
-                         [-self.len, -self.len, -self.len]]  # Đỉnh 7
-        self.size = 100
-        self.screen = (800, 600)
-        self.edges = [
-                    (0, 1),  # Đỉnh 0 nối với đỉnh 1
-                    (0, 2),  # Đỉnh 0 nối với đỉnh 2
-                    (0, 4),  # Đỉnh 0 nối với đỉnh 4
-                    (1, 3),  # Đỉnh 1 nối với đỉnh 3
-                    (1, 5),  # Đỉnh 1 nối với đỉnh 5
-                    (2, 3),  # Đỉnh 2 nối với đỉnh 3
-                    (2, 6),  # Đỉnh 2 nối với đỉnh 6
-                    (3, 7),  # Đỉnh 3 nối với đỉnh 7
-                    (4, 5),  # Đỉnh 4 nối với đỉnh 5
-                    (4, 6),  # Đỉnh 4 nối với đỉnh 6
-                    (5, 7),  # Đỉnh 5 nối với đỉnh 7
-                    (6, 7)]  # Đỉnh 6 nối với đỉnh 7
-        
-    def reset(self):
-        self.vertices = [[ self.len,  self.len,  self.len],  # Đỉnh 0
-                         [ self.len,  self.len, -self.len],  # Đỉnh 1
-                         [ self.len, -self.len,  self.len],  # Đỉnh 2
-                         [ self.len, -self.len, -self.len],  # Đỉnh 3
-                         [-self.len,  self.len,  self.len],  # Đỉnh 4
-                         [-self.len,  self.len, -self.len],  # Đỉnh 5
-                         [-self.len, -self.len,  self.len],  # Đỉnh 6
-                         [-self.len, -self.len, -self.len]]  # Đỉnh 7
-
-    def update(self, angle):
-        self.reset()
-        self.vertices = self.inversion.rotate_vertices(self.vertices, angle)
+        self.matrix3d = Matrix3D()
+        self.blocks = []
+        for x in [-1, 0, 1]:
+            for y in [-1, 0, 1]:
+                for z in [-1, 0, 1]:
+                    block = Block((x, y, z), len(self.blocks))
+                    self.blocks.append(block)
+        self.cube = numpy.array([
+                                [[ 0,  1,  2], [ 3,  4,  5], [ 6,  7,  8]],  # Lớp 0
+                                [[ 9, 10, 11], [12, 13, 14], [15, 16, 17]],  # Lớp 1
+                                [[18, 19, 20], [21, 22, 23], [24, 25, 26]]   # Lớp 2
+                            ])
+    def update(self, start = False):
+        if start:
+            for block in self.blocks:
+                block.update()
+            return
+        # self.matrix3d.rotate_layer_yz(self.cube, 0, -1)
+        # for i in range(90):
+        for block in self.blocks:
+                if block.get() < 9:
+                    block.update((45, 0, 0))
 
     def render(self, display : pygame.Surface):
-        for i in self.edges:
-            pygame.draw.line(display, (255, 255, 255), 
-                             (self.vertices[i[0]][0] * self.size + self.screen[0] // 2, self.vertices[i[0]][1] * self.size + self.screen[1] // 2),
-                               (self.vertices[i[1]][0] * self.size + self.screen[0] // 2, self.vertices[i[1]][1] * self.size + self.screen[1] // 2))
+        for i in self.blocks:
+            i.render(display)

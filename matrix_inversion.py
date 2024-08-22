@@ -54,3 +54,17 @@ class MatrixInversion:
         for i in range(len(vertices)):
             vertices[i] = self.rotationeZ(vertices[i], angles['Z'])
         return vertices
+    
+class Matrix3D:
+    def __init__(self):
+        self.none = None
+    def rotate_layer_xy(self, cube, z_layer, direction):
+        cube[z_layer] = numpy.rot90(cube[z_layer], k=-direction)
+        return cube
+    def rotate_layer_xz(self, cube, y_layer, direction):
+        cube[:, y_layer, :] = numpy.rot90(cube[:, y_layer, :], k=-direction)
+        return cube
+    def rotate_layer_yz(self, cube, x_layer, direction):
+        cube[:, :, x_layer] = numpy.rot90(cube[:, :, x_layer], k=-direction)
+        return cube
+
