@@ -21,7 +21,7 @@ class game:
     def run(self):
         while self.running:
             self.screen.fill((0, 0, 0))
-            self.clock.tick(40)
+            self.clock.tick(120)
             self.rubik.runLoop()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -30,11 +30,11 @@ class game:
                     sys.exit()
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_x]:
-                    self.rubik.controlRotation((1, 0, 0))
+                    self.rubik.controlRotation((3, 0, 0))
                 if keys[pygame.K_y]:
-                    self.rubik.controlRotation((0, 1, 0))
+                    self.rubik.controlRotation((0, 3, 0))
                 if keys[pygame.K_z]:
-                    self.rubik.controlRotation((0, 0, 1))
+                    self.rubik.controlRotation((0, 0, 3))
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -56,6 +56,8 @@ class game:
                     if event.key == pygame.K_s:
                         print("Write Datas")
                         self.rubik.write()
+                    if event.key == pygame.K_p:
+                        self.rubik.resetRotations()
                         
             pygame.display.update()
 

@@ -45,6 +45,11 @@ class MatrixInversion:
         Rz = self.createRz(angle)
         return numpy.dot(Rz, points)
     
+    def matrixMultiplication(self, x, y, z):
+        result = numpy.dot(self.createRx(x), self.createRy(y))
+        result = numpy.dot(result, self.createRz(z))
+        return result
+    
     def rotate_vertices(self, vertices, angles):
         # Apply rotation on all vertices
         for i in range(len(vertices)):

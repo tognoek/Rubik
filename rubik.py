@@ -1,4 +1,5 @@
 import numpy
+import copy
 from matrix_inversion import Matrix3D
 from block import Block
 
@@ -8,7 +9,7 @@ class Rubik:
         self.display = display
         self.rotation = self.const
         self.angle = 0
-        self.erroAngles = [0, 0, 0]
+        self.erroAngles = (0, 0, 0)
         self.matrix3d = Matrix3D()
         self.blocks = []
         self.defaultAngle = 10
@@ -25,6 +26,7 @@ class Rubik:
                                 [[ 5, 14, 23], [4, 13, 22], [3, 12, 21]],  # Lớp 1
                                 [[8, 17, 26], [7, 16, 25], [6, 15, 24]]   # Lớp 2
                             ])
+        self.blocksCopy = None
         
     def write(self):
         with open('data.txt', 'w') as f:
@@ -84,17 +86,31 @@ class Rubik:
             self.setRotation(self.const)
     
     def controlRotation(self, angle = (0, 0, 0)):
+        self.erroAngles = (self.erroAngles[0] + angle[0], 
+                           self.erroAngles[1] + angle[1],
+                           self.erroAngles[2] + angle[2])
+        
+    def resetRotations(self):
+        self.erroAngles = (6, 6, 6)
+
+    def controllErro(self):
+        self.blocksCopy = copy.deepcopy(self.blocks)
+        for block in self.blocksCopy:
+            block.update(self.erroAngles)
+
+    def resetErro(self):
+        tempErroAngles = (-self.erroAngles[0],
+                          -self.erroAngles[1],
+                          -self.erroAngles[2])
         for block in self.blocks:
-            block.update(angle)
-        for index in range(len(self.erroAngles)):
-            self.erroAngles[index] += angle[index]
+            block.update(tempErroAngles)
             
     def B(self, inverted = False):  
         array = self.matrix3d.get_layer_x(self.cube, 2)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
-                block.update((self.defaultAngle + self.erroAngles[0], 0 + self.erroAngles[1], 0 + self.erroAngles[2]))
+                block.update((self.defaultAngle, 0, 0))
         if self.angle == self.sizeRotation - 1:
             self.matrix3d.rotate_layer_yz(self.cube, 2, 1)
     def D(self, inverted = False):
@@ -102,7 +118,7 @@ class Rubik:
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
-                block.update((0 + self.erroAngles[0], self.defaultAngle + self.erroAngles[1], 0 + self.erroAngles[2]))
+                block.update((0, self.defaultAngle, 0))
         if self.angle == self.sizeRotation - 1:
             self.matrix3d.rotate_layer_xz(self.cube, 2, 1)
             # print(self.cube)
@@ -111,7 +127,7 @@ class Rubik:
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
-                block.update((self.defaultAngle + self.erroAngles[0], 0 + self.erroAngles[1], 0 + self.erroAngles[2]))
+                block.update((self.defaultAngle, 0, 0))
         if self.angle == self.sizeRotation - 1:
             self.matrix3d.rotate_layer_yz(self.cube, 0, 1)
             # print(self.cube)
@@ -121,7 +137,7 @@ class Rubik:
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
-                block.update((0 + self.erroAngles[0], 0 + self.erroAngles[1], self.defaultAngle + self.erroAngles[2]))
+                block.update((0, 0, self.defaultAngle))
         if self.angle == self.sizeRotation - 1:
             self.matrix3d.rotate_layer_xy(self.cube, 0, 1)
     def R(self, inverted = False):
@@ -129,7 +145,7 @@ class Rubik:
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
-                block.update((0 + self.erroAngles[0], 0 + self.erroAngles[1], self.defaultAngle + self.erroAngles[2]))
+                block.update((0, 0, self.defaultAngle))
         if self.angle == self.sizeRotation - 1:
             self.matrix3d.rotate_layer_xy(self.cube, 2, 1)
     def U(self, inverted = False):
@@ -137,10 +153,11 @@ class Rubik:
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
-                block.update((0 + self.erroAngles[0], self.defaultAngle + self.erroAngles[1], 0 + self.erroAngles[2]))
+                block.update((0, self.defaultAngle, 0))
         if self.angle == self.sizeRotation - 1:
             self.matrix3d.rotate_layer_xz(self.cube, 0, 1)
 
     def render(self):
-        for block in self.blocks:
+        self.controllErro()
+        for block in self.blocksCopy:
             block.render(self.display)
