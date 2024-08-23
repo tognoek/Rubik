@@ -21,7 +21,7 @@ class Rubik:
                 for z in [-1, 0, 1]:
                     block = Block((x, y, z), len(self.blocks))
                     self.blocks.append(block)
-        self.cube = numpy.array([
+        self.cubes = numpy.array([
                                 [[ 2,  11,  20], [ 1,  10,  19], [ 0,  9,  18]],  # Lớp 0
                                 [[ 5, 14, 23], [4, 13, 22], [3, 12, 21]],  # Lớp 1
                                 [[8, 17, 26], [7, 16, 25], [6, 15, 24]]   # Lớp 2
@@ -30,12 +30,12 @@ class Rubik:
         
     def write(self):
         with open('data.txt', 'w') as f:
-            # f.write(str(self.cube))
+            # f.write(str(self.cubes))
             for block in self.blocks:
                 f.writelines(str(block.get()) + " " + str(block.write()) + "\n")
-            for cube in self.cube:
+            for cube in self.cubes:
                 f.writelines(str(cube) + "\n")
-        # print(self.cube)
+        # print(self.cubes)
 
     def start(self):
         for block in self.blocks:
@@ -106,56 +106,56 @@ class Rubik:
             block.update(tempErroAngles)
             
     def B(self, inverted = False):  
-        array = self.matrix3d.get_layer_x(self.cube, 2)
+        array = self.matrix3d.get_layer_x(self.cubes, 2)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
                 block.update((self.defaultAngle, 0, 0))
         if self.angle == self.sizeRotation - 1:
-            self.matrix3d.rotate_layer_yz(self.cube, 2, 1)
+            self.matrix3d.rotate_layer_yz(self.cubes, 2, 1)
     def D(self, inverted = False):
-        array = self.matrix3d.get_layer_y(self.cube, 2)
+        array = self.matrix3d.get_layer_y(self.cubes, 2)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
                 block.update((0, self.defaultAngle, 0))
         if self.angle == self.sizeRotation - 1:
-            self.matrix3d.rotate_layer_xz(self.cube, 2, 1)
-            # print(self.cube)
+            self.matrix3d.rotate_layer_xz(self.cubes, 2, 1)
+            # print(self.cubes)
     def F(self, inverted = False):
-        array = self.matrix3d.get_layer_x(self.cube, 0)
+        array = self.matrix3d.get_layer_x(self.cubes, 0)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
                 block.update((self.defaultAngle, 0, 0))
         if self.angle == self.sizeRotation - 1:
-            self.matrix3d.rotate_layer_yz(self.cube, 0, 1)
-            # print(self.cube)
+            self.matrix3d.rotate_layer_yz(self.cubes, 0, 1)
+            # print(self.cubes)
             
     def L(self, inverted = False):
-        array = self.matrix3d.get_layer_z(self.cube, 0)
+        array = self.matrix3d.get_layer_z(self.cubes, 0)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
                 block.update((0, 0, self.defaultAngle))
         if self.angle == self.sizeRotation - 1:
-            self.matrix3d.rotate_layer_xy(self.cube, 0, 1)
+            self.matrix3d.rotate_layer_xy(self.cubes, 0, 1)
     def R(self, inverted = False):
-        array = self.matrix3d.get_layer_z(self.cube, 2)
+        array = self.matrix3d.get_layer_z(self.cubes, 2)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
                 block.update((0, 0, self.defaultAngle))
         if self.angle == self.sizeRotation - 1:
-            self.matrix3d.rotate_layer_xy(self.cube, 2, 1)
+            self.matrix3d.rotate_layer_xy(self.cubes, 2, 1)
     def U(self, inverted = False):
-        array = self.matrix3d.get_layer_y(self.cube, 0)
+        array = self.matrix3d.get_layer_y(self.cubes, 0)
         array = array.reshape((-1))
         for block in self.blocks:
             if block.get() in array:
                 block.update((0, self.defaultAngle, 0))
         if self.angle == self.sizeRotation - 1:
-            self.matrix3d.rotate_layer_xz(self.cube, 0, 1)
+            self.matrix3d.rotate_layer_xz(self.cubes, 0, 1)
 
     def render(self):
         self.controllErro()
