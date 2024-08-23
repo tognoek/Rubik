@@ -30,6 +30,10 @@ class Block:
                     (4, 6),  # Đỉnh 4 nối với đỉnh 6
                     (5, 7),  # Đỉnh 5 nối với đỉnh 7
                     (6, 7)]  # Đỉnh 6 nối với đỉnh 7
+        for i in range(len(self.vertices)):
+            self.vertices[i][0] += self.position[0] * 2 * self.len
+            self.vertices[i][1] += self.position[1] * 2 * self.len
+            self.vertices[i][2] += self.position[2] * 2 * self.len
     def get(self) -> int:
         return self.id
     
@@ -47,16 +51,17 @@ class Block:
         index = 0
         for i in self.angles:
             self.angles[i] += angles[index]
+            if self.angles[i] == 360:
+                self.angles[i] = 0
             index += 1
 
+    def write(self):
+        return self.angles
+
     def update(self, angles = (0, 0, 0)):
-        self.reset()
         self.updateAngels(angles)
-        for i in range(len(self.vertices)):
-            self.vertices[i][0] += self.position[0] * 2 * self.len
-            self.vertices[i][1] += self.position[1] * 2 * self.len
-            self.vertices[i][2] += self.position[2] * 2 * self.len
-        self.vertices = self.inversion.rotate_vertices(self.vertices, self.angles)
+        tempAngles = {'X' : angles[0], 'Y' : angles[1], 'Z' : angles[2]}
+        self.vertices = self.inversion.rotate_vertices(self.vertices, tempAngles)
 
     def render(self, display : pygame.Surface):
         for i in self.edges:

@@ -58,13 +58,21 @@ class MatrixInversion:
 class Matrix3D:
     def __init__(self):
         self.none = None
-    def rotate_layer_xy(self, cube, z_layer, direction):
-        cube[z_layer] = numpy.rot90(cube[z_layer], k=-direction)
-        return cube
     def rotate_layer_xz(self, cube, y_layer, direction):
-        cube[:, y_layer, :] = numpy.rot90(cube[:, y_layer, :], k=-direction)
+        cube[y_layer] = numpy.rot90(cube[y_layer], k=-direction)
+        return cube
+    def rotate_layer_xy(self, cube, z_layer, direction):
+        cube[:, z_layer, :] = numpy.rot90(cube[:, z_layer, :], k=-direction)
         return cube
     def rotate_layer_yz(self, cube, x_layer, direction):
         cube[:, :, x_layer] = numpy.rot90(cube[:, :, x_layer], k=-direction)
         return cube
 
+    def get_layer_x(self, cube, x_layer):
+        return cube[:, :, x_layer]
+
+    def get_layer_y(self, cube, y_layer):
+        return cube[y_layer]
+    
+    def get_layer_z(self, cube, z_layer):
+        return cube[:, z_layer, :]
