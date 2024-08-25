@@ -2,6 +2,7 @@ import numpy
 import copy
 from matrix_inversion import Matrix3D
 from block import Block
+import random
 
 class Rubik:
     def __init__(self, display):
@@ -14,6 +15,12 @@ class Rubik:
         self.blocks = []
         self.defaultAngle = 10
         self.sizeRotation = 9
+        self.color = [(255, 255, 255), 
+                    (31, 204, 62),
+                    (122, 77, 191),
+                    (194, 138, 43),
+                    (95, 113, 138),
+                    (84, 19, 43)]
         self.loop = []
         self.index = 0
         for x in [-1, 0, 1]:
@@ -27,6 +34,8 @@ class Rubik:
                                 [[8, 17, 26], [7, 16, 25], [6, 15, 24]]   # Lớp 2
                             ])
         self.blocksCopy = None
+        for block in self.blocks:
+            block.setColors(self.color) 
         
     def write(self):
         with open('data.txt', 'w') as f:
@@ -159,5 +168,13 @@ class Rubik:
 
     def render(self):
         self.controllErro()
+        pixels = []
         for block in self.blocksCopy:
+            pixels = pixels + block.getPixel()
             block.render(self.display)
+        # print(pixels)
+        # pixels.sort(key=lambda item: item[0][2])
+        # print(pixels)
+        for pixel in pixels:
+            # print(pixel)
+            self.display.set_at((pixel[0][1], pixel[0][1]), pixel[1])

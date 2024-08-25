@@ -81,3 +81,34 @@ class Matrix3D:
     
     def get_layer_z(self, cube, z_layer):
         return cube[:, z_layer, :]
+
+class Plane:
+    def __init__(self):
+        pass
+    def setDatas(self, datas):
+        x1, y1, z1 = datas[0]
+        x2, y2, z2 = datas[1]
+        x3, y3, z3 = datas[2]
+
+        self.A = (y2 - y1) * (z3 - z1) - (z2 - z1) * (y3 - y1)
+        self.B = (z2 - z1) * (x3 - x1) - (x2 - x1) * (z3 - z1)  
+        self.C = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
+        self.D = -(self.A * x1 + self.B * y1 + self.C * z1)
+
+        # Xác định phạm vi cho x và y dựa trên tọa độ của 4 điểm
+        x_coords = [int(point[0]) for point in datas]
+        y_coords = [int(point[1]) for point in datas]
+
+        self.x_min, self.x_max = min(x_coords), max(x_coords)
+        self.y_min, self.y_max = min(y_coords), max(y_coords)
+
+    def getResult(self):
+        points = []
+        for x in range(self.x_min, self.x_max + 1):
+            for y in range(self.y_min, self.y_max + 1):
+                if self.C != 0:
+                    z = -(self.A * x + self.B * y + self.D) / self.C
+                    points.append((x, y, int(z)))
+                else:
+                    points.append((x, y, int(0)))
+        return points
